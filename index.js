@@ -33,7 +33,6 @@ function Spec(runner) {
     Base.symbols.pending = '⌗'
   }
 
-  var self = this
   var indents = 0
   var n = 0
 
@@ -70,7 +69,7 @@ function Spec(runner) {
     interceptedOutput = []
   }
 
-  function flushLogStack(indent, color) {
+  function flushLogStack(indent) {
     if (interceptedOutput.length === 0) {
       return
     }
@@ -114,7 +113,6 @@ function Spec(runner) {
     }
 
     const date = new Date(ms)
-    const details = {}
     const hours = date.getUTCHours()
     const minutes = date.getUTCMinutes()
     const seconds = date.getUTCSeconds()
@@ -142,7 +140,7 @@ function Spec(runner) {
 
   runner.on('suite', function (suite) {
     if (!suite.title) {
-        return;
+      return;
     }
 
     unhookIntercept()
@@ -178,7 +176,7 @@ function Spec(runner) {
     createIntercept()
   })
 
-  runner.on('test', function (test) {
+  runner.on('test', function () {
     someTestsRan = true
     flushIfDebugAndResetIntercept(indent())
   })

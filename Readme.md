@@ -1,5 +1,5 @@
-mocha-power-reporter
-====================
+mocha-reporter
+==============
 
 Mocha reporter, enhanced.
 
