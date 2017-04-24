@@ -1,6 +1,6 @@
 {
   "name": "mocha-reporter",
-  "version": "0.0.2",
+  "version": "0.0.3",
   "description": "Mocha reporter, enhanced",
   "main": "index.js",
   "scripts": {
