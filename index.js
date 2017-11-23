@@ -39,7 +39,6 @@ function Spec(runner) {
   var n = 0
 
   function indent() {
-    cursor.CR()
     return Array(indents).join('  ')
   }
 
