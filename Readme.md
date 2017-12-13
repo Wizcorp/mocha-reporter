@@ -50,6 +50,7 @@ the ones that passed.
 
 > DEBUG=true npm run test
 
+![debug](./screenshots/debug.png)
 
 Usage
 -----
