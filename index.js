@@ -11,13 +11,51 @@ var formatError = require('format-error').format;
 var Base = mocha.reporters.Base
 var inherits = mocha.utils.inherits
 var color = Base.color
-var cursor = Base.cursor
 
 /**
  * Expose `Spec`.
  */
 
 exports = module.exports = Spec
+
+/**
+ * Optional hook function; this will
+ * wrap Mocha's standard functions into
+ * a wrapper that will print the file and
+ * line number at which the test can be found.
+ */
+function getFilenameAndLine() {
+  var error = new Error()
+  return error.stack
+    .split('\n')
+    .slice(3, 4)
+    .pop()
+    .split(process.cwd())
+    .pop()
+    .slice(1, -1)
+}
+
+function wrap(realFunc) {
+  return function (label, func) {
+    var line = getFilenameAndLine()
+    realFunc(label, function () {
+      console.log(chalk.cyan(line))
+      return func.call(this)
+    })
+  }
+}
+
+var isHookActive = false
+exports.hook = function () {
+  isHookActive = true
+
+  global.it = wrap(global.it)
+  global.it.only = wrap(global.it.only)
+  global.before = wrap(global.before)
+  global.beforeEach = wrap(global.beforeEach)
+  global.after = wrap(global.after)
+  global.afterEach = wrap(global.afterEach)
+};
 
 /**
  * Initialize a new `Spec` test reporter.
@@ -81,10 +119,28 @@ function Spec(runner) {
       return clearLogStack()
     }
 
-    console.log()
+    var filenameLine = isHookActive
+    var firstLine = true
+
     interceptedOutput.forEach(function (data) {
       let arr = data.toString().split('\n')
       arr.pop()
+
+      // First line should always be the file name
+      // printed by the hook
+      if (filenameLine) {
+        filenameLine = false
+        console.log(indent + arr.shift())
+      }
+
+			// Add a space if more logs are to come
+      if (firstLine) {
+        firstLine = false
+        if (interceptedOutput.length > 1 || arr.length > 0) {
+          console.log()
+        }
+      }
+
       arr.forEach(function (line) {
         console.log(indent + chalk.blue('>>> logs: ') + line)
       })
